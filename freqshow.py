@@ -69,12 +69,19 @@ ui.Button.border_px    = 2
 
 
 if __name__ == '__main__':
-	# Initialize pygame and SDL to use the PiTFT display and touchscreen.
-	os.putenv('SDL_VIDEODRIVER', 'fbcon')
-	os.putenv('SDL_FBDEV'      , '/dev/fb1')
-	os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
-	os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
-	pygame.display.init()
+	# make exception if /dev/fb1 cannot be found. Try and use current screen instead
+	try:
+		# initialize pygame and SDL to use thje PiTFT display and touchscreen
+		os.putenv('SDL_VIDEODRIVER', 'fbcon')
+		os.putenv('SDL_FBDEV'      , '/dev/fb1')
+		os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
+		os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
+		pygame.display.init()
+	except pygame.error:
+		os.unsetenv('SDL_VIDEODRIVER')
+		os.unsetenv('SDL_FBDEV')
+		os.unsetenv('SDL_MOUSEDEV')
+		pygame.display.init()
 	pygame.font.init()
 	pygame.mouse.set_visible(False)
 	# Get size of screen and create main rendering surface.
